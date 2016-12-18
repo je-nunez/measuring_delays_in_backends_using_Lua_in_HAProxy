@@ -67,7 +67,7 @@ function insert_timestamp_http_request_header(txn)
     -- resolution, with the time the incoming HTTP request has been received
     -- by HAProxy.
     --
-    -- http://www.arpalert.org/src/haproxy-lua-api/1.7dev/index.html#HTTP.req_add_header
+    -- http://www.arpalert.org/src/haproxy-lua-api/1.7/index.html#HTTP.req_add_header
 
     local headerName = get_http_header_name(txn, true)
 
@@ -130,7 +130,7 @@ function insert_timestamp_http_response_header(txn)
     -- headers were received from the client and the time the HTTP response
     -- headers were received from the backend.
     --
-    -- http://www.arpalert.org/src/haproxy-lua-api/1.7dev/index.html#HTTP.res_add_header
+    -- http://www.arpalert.org/src/haproxy-lua-api/1.7/index.html#HTTP.res_add_header
 
     -- add first the HTTP response header with the time the response headers have
     -- been received from the backend.
