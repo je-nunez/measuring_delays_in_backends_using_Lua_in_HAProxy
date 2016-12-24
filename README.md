@@ -1,4 +1,4 @@
-# measuring_backend_request_through_HAProxy_using_Lua
+# measuring_delays_in_backends_using_Lua_in_HAProxy
 
 Measure the time delay, in microseconds, of a http request passing through HAProxy version 1.7 till the backend http server starts the response, using Lua.
 
