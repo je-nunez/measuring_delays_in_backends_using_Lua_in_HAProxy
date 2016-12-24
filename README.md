@@ -105,7 +105,7 @@ In Apache servers, to fulfill the requirement to return as-is the `x-entry-times
 
 A different way to measure the time delay spent by the backend is to use variables in HAProxy, `set-var(my_variable_name)`, instead of the way described above of adding an HTTP-request header `x-entry-timestamp-.*` to the request upstream, and then the backend echoing it back in HTTP-response headers.
 
-With `set-var(my_variable_name)`, HAProxy creates a new (transaction) variable that then the LUA code called by HAProxy uses. To obtain the value of the current epoch of time in microsecond resolution, you need to program an HAProxy `fetcher`. There is a possible example in [flexible_for_TCP_experimental/using_vars_for_case_of_TCP_proxying.lua](flexible_for_TCP_experimental/using_vars_for_case_of_TCP_proxying.lua) in this repository. A minimalistic example of using it might be:
+With `set-var(my_variable_name)`, HAProxy creates a new (transaction) variable that then the LUA code called by HAProxy uses. To obtain the value of the current epoch of time in microsecond resolution, you need to program an HAProxy `fetcher`. There is possible code to do so in [flexible_for_TCP_experimental/using_vars_for_case_of_TCP_proxying.lua](flexible_for_TCP_experimental/using_vars_for_case_of_TCP_proxying.lua) in this repository. A minimalistic example of using it might be:
 
        global
               # ... HAProxy settings
@@ -153,9 +153,13 @@ If implemented, this example above will answer by inserting a HTTP-response head
 
 where the delay of the backend processing was 99 microseconds, and the other times reported in the HTTP header are the epoch in microseconds of when the request was received and when it was responded.
 
-HAProxy gives a several flexible ways to use Lua embedding (actions, fetchers, services, tasks, etc), and there are differences between the approach of inserting HTTP-request headers and using transaction variables proposed in this repository. The first is that, in the former, the backend upstream needs to echo back the HTTP-request header `x-entry-timestamp-.*` it receives, so the backend needs to collaborate with HAProxy, while in the latter the variables are all handled by HAProxy and the embedded Lua code. The second difference is that the former only works for HTTP proxies, while the latter can extend also to TCP-proxies (in the case of non-HTTP TCP proxies, you can not use the setting above:
+HAProxy gives a several flexible ways to use Lua embedding (actions, fetchers, services, tasks, etc), and there are differences between the approach of inserting HTTP-request headers and using transaction variables proposed in this repository. The first is that, in the former, the backend upstream needs to echo back the HTTP-request header `x-entry-timestamp-.*` it receives, so the backend needs to collaborate with HAProxy, while in the latter the variables are all handled by HAProxy and the embedded Lua code, so nothing is required in the backend server upstream.
+
+The second difference is that the former approach only works for HTTP proxies since it inserts a new HTTP-request header as a probe, while the latter does not need to change the request so it can be extended also to TCP-proxies (in the case of non-HTTP TCP proxies, you can not use the setting above:
 
                http-response  add-header "x-delay-microseconds-haproxy"   %[var(txn.delay_microseconds)]
 
-so what you need to use is that `lua.calc_txn_delay()` has side-effects and it logs, or reports, the duration of the backend request, e.g., like for slow requests. The Lua code provided shows examples of this.) The third difference between both is that in the former you do not need a `maxconn 65536` (or some value) in the frontend, while in the latter it might be necessary to avoid DoS.
+so what you need to use is that `lua.calc_txn_delay()` has side-effects and it logs, or reports, the duration of the backend request, e.g., like for slow requests. The Lua code provided shows examples of this.)
+
+The third difference between both approaches is that in the former you do not need a `maxconn 65536` (or some value) in the frontend, while in the latter it might be necessary to avoid DoS.
 
