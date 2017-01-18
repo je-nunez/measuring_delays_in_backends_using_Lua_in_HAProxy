@@ -163,3 +163,9 @@ so what you need to use is that `lua.calc_txn_delay()` has side-effects and it l
 
 The third difference between both approaches is that in the former you do not need a `maxconn 65536` (or some value) in the frontend, while in the latter it might be necessary to avoid DoS.
 
+# Timings
+
+This section uses these points in the HAProxy 1.7 documentation: [http://cbonte.github.io/haproxy-dconv/1.7/configuration.html#8.4](http://cbonte.github.io/haproxy-dconv/1.7/configuration.html#8.4).
+
+**TODO.**
+
